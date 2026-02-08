@@ -1,0 +1,5 @@
+[book]
+authors = ["Nykenik24"]
+language = "en"
+src = "src"
+title = "C squared specification"
