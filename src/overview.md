@@ -1,28 +1,23 @@
 <h1 align="center">C squared</h1>
 
-## Table of contents
-1. [Overview](#Overview)
-2. [Programs](#Programs)
+# Overview
+C&sup2; is an enhanced version of [C lang](https://en.wikipedia.org/wiki/C_(programming_language), made to:
+- Be easier.
+- Be more flexible.
+- Include more features for convenience.
+- Include more complex structures and types overall.
+- Give better error reports and help overall.
+- And, most importantly, **make low-level simpler**.
 
-## Overview
-C squared is a general-purpose, low-level pragmatic programming language designed specifically to be as explicit as possible.
 
-C squared prioritizes comfort and reliability over 
-- Preference of specific groups of programmers.
-- Terseness of code.
-- Abstract concepts (even if they might favor the language's range of use cases).
+## What this book IS *NOT*
+This book is the **specification** of C&sup2;. It contains all information about the behavior and definitions of C&sup2;. This book is **NOT** a manual or documentation for C&sup2;, it supposes the user already has background knowledge of C&sup2;.
 
-C squared also aims to be completely at the user's control, with:
-- Configuration of the compiler's behavior (file output, flags, log level, *strictness* [which, for example, mandates if the compiler should treat warnings as errors too], etc.).
-- Removable modules (allowing for the removal of standard library in the program or certain parts of it to make programs more lightweight).
+If C&sup2; declares a magic singleton, you will find it here; if it contains a primitive built-in type, you will find it here.
 
-## Programs
-Programs in C squared consist of **one or more** declaration(s).
+You can't learn about C&sup2; by *just* reading this book. It does not contain informative paragraphs destinated to teaching, but objective information purely dedicated to showcasing how the language works internally.
 
-Programs MUST include the `main` function **only once**.
-
-Programs CAN declare (aside from the `main` function):
-- Other [functions]().
-- File [scope]() variables.
-- [Structures]().
-- [Enumeration]().
+## How and when to read this book
+There are two main reasons why you would read this book:
+- **Answer a specific question**: search for the answer by pressing `s`, and see if it can be solved.
+- **Learn about the language's internals**: use the table of contents in the left.
