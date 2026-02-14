@@ -5,4 +5,16 @@ src = "src"
 title = "C squared specification"
 
 [output.html]
-site-url = "/spec/"
+theme = "theme"
+default-theme = "dark"
+preferred-dark-theme = "navy"
+smart-punctuation = true
+definition-lists = true
+admonitions = true
+mathjax-support = false
+no-section-label = false
+git-repository-url = "https://github.com/csq-lang/spec"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/csq-lang/spec/edit/master/src/{path}"
+#input-404 = "not-found.md"
+sidebar-header-nav = true
