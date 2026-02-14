@@ -1,7 +1,7 @@
 <h1 align="center">C squared</h1>
 
 # Overview
-C&sup2; is an enhanced version of [C lang](https://en.wikipedia.org/wiki/C_(programming_language), made to:
+C&sup2; is an enhanced version of [C lang](https://en.wikipedia.org/wiki/C_\(programming_language), made to:
 - Be easier.
 - Be more flexible.
 - Include more features for convenience.
