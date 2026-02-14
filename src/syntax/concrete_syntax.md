@@ -1,4 +1,5 @@
-# Concrete syntax
+# Grammar
+Also known as concrete syntax.
 
 |**Usage**|**Notation**
 :-----:|:-----:
@@ -15,7 +16,11 @@ comment |<code>(* ... *)</code>
 special sequence |<code>? ... ?</code>
 exception |<code>-</code>
 
+> [!NOTE]
 > Table from [this GitHub gist](https://gist.github.com/refs/e6e84057eb047ee5f306b76e13f76d1e).
+
+> [!WARNING]
+> This grammar might be outdated compared to the compiler.
 
 ```bnf
 Program = { Ignorable | Declaration | Statement } ;
