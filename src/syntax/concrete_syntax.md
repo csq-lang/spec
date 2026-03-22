@@ -19,296 +19,150 @@ exception |<code>-</code>
 > [!NOTE]
 > Table from [this GitHub gist](https://gist.github.com/refs/e6e84057eb047ee5f306b76e13f76d1e).
 
-> [!WARNING]
-> This grammar might be outdated compared to the compiler.
+> [!NOTE]
+> New version of the grammar (not deprecated).
 
 ```bnf
-Program = { Ignorable | Declaration | Statement } ;
-
-Ignorable = WS | Comment ;
-
-Comment = "//", { anychar - "\n" } ;
-
-(* ===== Lexical ===== *)
-
-boolean = "true" | "false" ;
-
-ident = ( letter, { letter | digit | "_" } ) - reserved ;
-
-number = digit, { digit }, [ ".", digit, { digit } ] ;
-
-string =
-      '"', { ( anychar - '"' ) | interpolated }, '"'
-    | "'", { ( anychar - "'" ) | interpolated }, "'" ;
-
-interpolated = "$", "{", { anychar - "}" }, "}" ;
-
-tag = "@", string ;
-
-letter =
-      "a" | "b" | "c" | "d" | "e" | "f" | "g"
-    | "h" | "i" | "j" | "k" | "l" | "m" | "n"
-    | "o" | "p" | "q" | "r" | "s" | "t" | "u"
-    | "v" | "w" | "x" | "y" | "z"
-    | "A" | "B" | "C" | "D" | "E" | "F" | "G"
-    | "H" | "I" | "J" | "K" | "L" | "M" | "N"
-    | "O" | "P" | "Q" | "R" | "S" | "T" | "U"
-    | "V" | "W" | "X" | "Y" | "Z" ;
-
-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-
-WS = " " | "\t" | "\n" | "\r" ;
-
-anychar = ? any character ? ;
-
-bit_depth = "8" | "16" | "32" | "64" ;
-
-(* ===== Literals ===== *)
-
-Literal =
-      number
-    | string
-    | boolean
-    | tag
-    | ArrayLiteral
-    | MapLiteral ;
-
-ArrayLiteral = "[", [ Expr, { ",", Expr } ], "]" ;
-
-KeyValue = "[", Expr, "]", ":", Expr ;
-
-MapLiteral = "{", [ KeyValue, { ",", KeyValue } ], "}" ;
-
-(* ===== Types ===== *)
-
-Type =
-    ["const"], ident - "void"
-    | ArrayType
-    | MapType
-    | FunctionType ;
-
-ArrayType = "[", Type, "]" ;
-
-MapType = "{", Type, ",", Type, "}" ;
-
-FunctionType = "(", [ Type, { ",", Type } ], ")", Type ;
-
-TypeAnnot = ":", Type ;
-
-(* ===== Declarations ===== *)
-
-Declaration =
-      Variable
-    | func
-    | Structure
-    | Enumeration ;
-
-Variable =
-    Type,
-    ident,
-    "=",
-    Expr ;
-
-func =
-    { Decorator },
-    "func",
-    ident,
-    "(",
-        [ Parameter, [ { ",", Parameter } ] ],
-    ")",
-    "->", Type,
-    "{", Block, "}" ;
-
-Decorator = "#", ident ;
-
-Parameter =
-      "self"
-    | "...", ident, TypeAnnot
-    | ident, TypeAnnot, [ "=", Expr ] ;
-
-StructParameter = ident, TypeAnnot, [ "=", Expr ] ;
-
-Structure =
-    "struct",
-    ident,
-    [ "(", StructParameter, { ",", StructParameter } , ")" ],
-    "{",
-        { StructureField | func }, ";",
-    "}" ;
-
-StructureField =
-    [ "private" ],
-    ident,
-    [ TypeAnnot ],
-    "=",
-    Expr ;
-
-Enumeration =
-    "enum",
-    ident,
-    "{",
-        ident, { ",", ident },
-    "}" ;
-
-(* ===== Statements ===== *)
-
-Statement =
-      If
-    | Switch
-    | Defer
-    | Return
-    | Throw
-    | Try
-    | Loop
-    | Declaration
-    | Expr ;
-
-If =
-    "if", "(", Expr, ")", "{", Block, "}",
-    { "else", "if", "(", Expr, ")", "{", Block, "}" },
-    [ "else", "{", Block, "}" ] ;
-
-Switch =
-    "switch", "(", Expr, ")", "{",
-        { Case },
-        [ "default", "{", Block, "}" ],
-    "}" ;
-
-Case =
-    "case",
-    "(",
-        Expr, { ",", Expr },
-    ")",
-    "{", Block, "}" ;
-
-Defer =
-      "defer", Expr
-    | "defer", "{", Block, "}" ;
-
-Return = "return", [ Expr ] ;
-
-Throw = "throw", Expr ;
-
-Try =
-    "try", "{", Block, "}",
-    "catch", "(", ident, ")", "{", Block, "}" ;
-
-Loop =
-      For
-    | While
-    | Until
-    | Repeat ;
-
-For =
-    "for",
-    "(",
-        ident, { ",", ident },
-        "in",
-        Expr,
-    ")",
-    "{", Block, "}" ;
-
-While =
-    "while",
-    [ "(", Expr, ")" ],
-    "{", Block, "}" ;
-
-Until =
-    "until",
-    "(", Expr, ")",
-    "{", Block, "}" ;
-
-Repeat =
-    "repeat",
-    Expr,
-    "{", Block, "}" ;
-
-Block = { Ignorable | Statement, ( ";" | "}" ) } ;
-
-(* ===== Expressions ===== *)
-
-Expr = Assignment ;
-
-Assignment =
-    LogicOr,
-    [ ( "=" | "+=" | "-=" | "*=" | "/=" ), Assignment ] ;
-
-LogicOr =
-    LogicAnd, { "or", LogicAnd } ;
-
-LogicAnd =
-    Equality, { "and", Equality } ;
-
-Equality =
-    Relational, { ( "==" | "!=" ), Relational } ;
-
-Relational =
-    Additive, { ( "<" | "<=" | ">" | ">=" ), Additive } ;
-
-Additive =
-    Multiplicative, { ( "+" | "-" ), Multiplicative } ;
-
-Multiplicative =
-    Exponent, { ( "*" | "/" | "%" ), Exponent } ;
-
-Exponent =
-    Unary, [ "^", Exponent ] ;
-
-
-Unary =
-      ( "-" | "#" ), Unary
-    | Range ;
-
-Primary =
-      Literal
-    | ident
-    | "(" Expr ")"
-    | FunctionCall
-    | AnonFunction
-    | New
-    | Spawn ;
-
-Postfix =
-    Primary,
-    { "." ident
-    | "[" Expr "]"
-    },
-    [ "++" | "--" ] ;
-
-Range =
-    Postfix, "..", Postfix ;
-
-(* Reserved keywords *)
-func = "func" ;
-if = "if" ;
-else = "else" ;
-switch = "switch" ;
-case = "case" ;
-default = "default" ;
-while = "while" ;
-for = "for" ;
-return = "return" ;
-throw = "throw" ;
-struct = "struct" ;
-enum = "enum" ;
-const = "const" ;
-let = "let" ;
-in = "in" ;
-import = "import" ;
-new = "new" ;
-repeat = "repeat" ;
-until = "until" ;
-defer = "defer" ;
-try = "try" ;
-catch = "catch" ;
-spawn = "spawn" ;
-private = "private" ;
-self = "self" ;
-or = "or" ;
-and = "and" ;
-reserved =  
-        if | else | switch | case | default | while | for 
-        | return  | throw | struct | enum | const | let 
-        | in | import | new | repeat | until | defer | try 
-        | catch | spawn | private | self | or | and ;
+program                ::= { external_declaration } ;
+
+external_declaration   ::= function_definition
+                         | declaration
+                         | namespace_definition
+                         | class_definition
+                         | type_definition
+                         ;
+
+(* new: type definition *)
+type_definition        ::= "type" identifier "=" type_definition_rhs ";" ;
+type_definition_rhs    ::= "struct" "{" { struct_member } "}"
+                         | type_specifier
+                         ;
+struct_member          ::= declaration_specifiers init_declarator_list? ";" ;
+
+declaration            ::= declaration_specifiers init_declarator_list? ";" ;
+declaration_specifiers ::= storage_class_specifier* type_specifier type_qualifier* ;
+storage_class_specifier::= "extern" | "static" ;
+type_specifier         ::= "void" | "int" | "uint" | "short" | "ushort" | "long" | "ulong"
+                         | "float" | "double" | "quad" | "bool" | "char" | "uchar"
+                         | identifier
+                         | template_type
+                         ;
+template_type          ::= identifier "<" template_arg_list ">" ;
+template_arg_list      ::= template_arg { "," template_arg } ;
+template_arg           ::= type_specifier | expression ;
+
+type_qualifier         ::= "const" ;
+
+init_declarator_list   ::= init_declarator { "," init_declarator } ;
+init_declarator        ::= declarator [ "=" initializer ] ;
+declarator             ::= pointer? direct_declarator ;
+pointer                ::= "*" type_qualifier* pointer? | "&" ;
+direct_declarator      ::= identifier
+                         | "(" declarator ")"
+                         | direct_declarator "[" constant_expression? "]"
+                         | direct_declarator "(" parameter_type_list? ")"
+                         ;
+
+parameter_type_list    ::= parameter_list [ "," "..." ] ;
+parameter_list         ::= parameter_declaration { "," parameter_declaration } ;
+parameter_declaration  ::= declaration_specifiers declarator? ;
+
+initializer            ::= assignment_expression | "{" initializer_list "}" ;
+initializer_list       ::= initializer { "," initializer } ;
+
+function_definition    ::= declaration_specifiers declarator compound_statement ;
+
+namespace_definition   ::= "namespace" identifier ;
+
+class_definition       ::= class_head "{" { class_member } "}" ";" ;
+class_head             ::= ("class" | "struct") identifier? base_clause? ;
+base_clause            ::= ":" base_specifier_list ;
+base_specifier_list    ::= base_specifier { "," base_specifier } ;
+base_specifier         ::= ("public" | "protected" | "private")? identifier ;
+
+class_member           ::= declaration
+                         | function_definition
+                         | access_specifier ":" 
+                         ;
+access_specifier       ::= "public" | "protected" | "private" ;
+
+statement              ::= compound_statement
+                         | expression_statement
+                         | selection_statement
+                         | iteration_statement
+                         ;
+
+compound_statement     ::= "{" { declaration | statement } "}" ;
+expression_statement   ::= expression? ";" ;
+
+selection_statement    ::= "if" "(" expression ")" statement [ "else" statement ]
+                         | "switch" "(" expression ")" statement
+                         ;
+
+iteration_statement    ::= "while" "(" expression ")" statement
+                         | "do" statement "while" "(" expression ")" ";"
+                         | "for" "(" for_init_statement expression? ";" expression? ")" statement
+                         ;
+for_init_statement     ::= expression_statement | declaration ;
+
+expression             ::= assignment_expression { "," assignment_expression } ;
+
+assignment_expression  ::= conditional_expression
+                         | unary_expression assignment_operator assignment_expression
+                         ;
+assignment_operator    ::= "=" | "+=" | "-=" | "*=" | "/=" | "%=" ;
+
+conditional_expression ::= logical_or_expression [ "?" expression ":" conditional_expression ] ;
+
+logical_or_expression  ::= logical_and_expression { "||" logical_and_expression } ;
+logical_and_expression ::= inclusive_or_expression { "&&" inclusive_or_expression } ;
+inclusive_or_expression::= exclusive_or_expression { "|" exclusive_or_expression } ;
+exclusive_or_expression::= and_expression { "^" and_expression } ;
+and_expression         ::= equality_expression { "&" equality_expression } ;
+equality_expression    ::= relational_expression { ( "==" | "!=" ) relational_expression } ;
+relational_expression  ::= shift_expression { ( "<" | ">" | "<=" | ">=" ) shift_expression } ;
+shift_expression       ::= additive_expression { ( "<<" | ">>" ) additive_expression } ;
+additive_expression    ::= multiplicative_expression { ( "+" | "-" ) multiplicative_expression } ;
+multiplicative_expression ::= cast_expression { ( "*" | "/" | "%" ) cast_expression } ;
+
+cast_expression        ::= unary_expression | "(" type_name ")" cast_expression ;
+
+unary_expression       ::= postfix_expression
+                         | "++" unary_expression
+                         | "--" unary_expression
+                         | unary_operator cast_expression
+                         | "sizeof" unary_expression
+                         ;
+unary_operator         ::= "&" | "*" | "+" | "-" | "~" | "!" ;
+
+postfix_expression     ::= primary_expression
+                         | postfix_expression "[" expression "]"
+                         | postfix_expression "(" argument_expression_list? ")"
+                         | postfix_expression "." identifier
+                         | postfix_expression "::" identifier
+                         | postfix_expression "++"
+                         | postfix_expression "--"
+                         ;
+
+primary_expression     ::= identifier
+                         | constant
+                         | string_literal
+                         | "(" expression ")"
+                         ;
+
+argument_expression_list ::= assignment_expression { "," assignment_expression } ;
+
+constant               ::= number | char_literal ;
+constant_expression    ::= conditional_expression ;
+
+type_name              ::= specifier_qualifier_list abstract_declarator? ;
+specifier_qualifier_list ::= type_specifier type_qualifier* ;
+
+abstract_declarator    ::= pointer direct_abstract_declarator? | direct_abstract_declarator ;
+direct_abstract_declarator ::= "(" abstract_declarator ")"
+                            | "[" constant_expression? "]" direct_abstract_declarator?
+                            | "(" parameter_type_list? ")" direct_abstract_declarator?
+                            ;
+
+translation_unit       ::= program ;
 ```

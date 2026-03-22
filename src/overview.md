@@ -5,7 +5,7 @@
 >
 > You can quite literally ignore it whole right now, because most information
 > (except the **_what this book is not_** and **_how and when to read this book_**
-> sections) is mostly obsolete.
+> headers, plus all chapters that have a note saying they are not deprecated) is mostly obsolete.
 
 # Overview
 
